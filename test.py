@@ -1,4 +1,4 @@
 import requests
-r = requests.get("https://randomuser.me/api/", params=query_params)
+r = requests.get("https://randomuser.me/api/")
 print(r)
 print(r.json())
