@@ -19,7 +19,7 @@ for f in os.listdir('download'):
         continue
 
     # skip matches with no pick data
-    if not data['pick bans']:
+    if not data['picks_bans']:
         continue
 
     # radiant = team 0
@@ -28,7 +28,7 @@ for f in os.listdir('download'):
         win_team = 1
 
     # get pick info
-    picks = pd.DataFrame(data['pick_bans'])
+    picks = pd.DataFrame(data['picks_bans'])
     picks = picks[picks.is_pick] #drop bans
     picks = picks.sort_values('order') #sort by order
 
@@ -39,7 +39,7 @@ for f in os.listdir('download'):
 
 db = pd.DataFrame(db, columns = ['match_id', 'hero_id', 'win'])
 
-# keep heroes with at least 50 samples
+# keep heroes with at least 50 samples, CHANGE WITH N UNDER VISUAL TO GET PROPER DATA FROM YOUR PARSING
 count = db.hero_id.value_counts()
 keep = count[count > 50].index
 db = db[db.hero_id.isin(keep)]
@@ -53,3 +53,28 @@ heroes = pd.read_csv('hero_stats.csv')[['name','hero_id']]
 lookup = {k: v[14:] for k,v in zip(heroes.hero_id, heroes.name)}
 def id2name(ids):
     return [lookup[i] for i in ids]
+
+# visuals
+N = 10
+bot10 = winrate.iloc[:N]
+top10 = winrate.iloc[-N:]
+
+fig, ax1 = plt.subplots()
+ax2 = ax1.twiny()
+
+ax1.bar(range(N), 100 * top10.values)
+ax1.bar(range(N), 100 * bot10.values)
+
+ax1.set_xticks(range(N))
+ax1.set_xticklabels(id2name(bot10.index))
+ax2.set_xlim(ax1.get_xlim())
+ax2.set_xticks(range(N))
+ax2.set_xticklabels(id2name(top10.index))
+ax1.tick_params(axis = 'x', rotation = 30)
+ax2.tick_params(axis = 'x', rotation = 30)
+ax1.set_ylabel('winrate')
+
+ax1.set_title("top/Bottom 10 winrate for last picks DATE")
+ax1.axhline(y=50, linestyle = '--', color = 'red')
+
+plt.show()
