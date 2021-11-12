@@ -1,6 +1,6 @@
 import requests, json, time, os
 
-# downloadmatch dta from open dota
+# downloadmatch dota from open dota
 def get_match_by_id(match_id):
     m_id = str(match_id)
     # fetch match data
